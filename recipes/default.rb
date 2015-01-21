@@ -8,21 +8,8 @@ package 'vim'
 # Because not everyone will send us nice  .tar.gz files
 package 'unzip'
 
-
-# Add additional locales
-if node[:locales]
-  node[:locales].each do |locale|
-    bash "adding #{locale} to /var/lib/locales/supported.d/local" do
-      user 'root'
-      echo locale >> "/var/lib/locales/supported.d/local"
-    end
-  end
-  bash "Including new locales" do
-    code <<-EOC
-       dpkg-reconfigure locales
-       update-locale
-    EOC
-  end
+locales "Add locales" do
+  locales node["look_and_feel-tlq"]["additional_locales"]
 end
 
 # Add a banner to ssh login if we're in the production environment
@@ -30,7 +17,7 @@ if node[:environment] == 'production'
   sshd_config = '/etc/ssh/sshd_config'
 
   seds = []
-  echos = []
+  echos = ["\n"]
 
   banner_path = '/etc/ssh_banner'
 
@@ -53,6 +40,8 @@ if node[:environment] == 'production'
   end
 
   service 'ssh' do
-    action :reload
+    provider Chef::Provider::Service::Upstart
+    supports :restart => true
+    action :restart
   end
 end
