@@ -39,9 +39,9 @@ if node[:environment] == 'production'
     EOC
   end
 
-  service 'sshd' do
-    provider Chef::Provider::Service::Upstart
-    supports :restart => true
-    action :restart
+  bash 'restarting sshd' do
+    user 'root'
+    code '/etc/init.d/sshd restart'
   end
+
 end
