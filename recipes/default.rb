@@ -39,9 +39,9 @@ if node[:environment] == 'production'
     EOC
   end
 
-  bash 'restarting sshd' do
+  bash 'restarting ssh' do
     user 'root'
-    code '/etc/init.d/sshd restart'
+    code '/etc/init.d/ssh restart'
   end
 
 end
