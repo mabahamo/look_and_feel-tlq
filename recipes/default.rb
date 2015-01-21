@@ -39,9 +39,10 @@ if node[:environment] == 'production'
     EOC
   end
 
-  bash 'restarting ssh' do
-    user 'root'
-    code '/etc/init.d/ssh restart'
+  service 'ssh' do
+      provider Chef::Provider::Service::Upstart
+      supports :restart => true
+      action :restart
   end
 
 end
